@@ -1,0 +1,33 @@
+version: '3.1'
+
+networks:
+  moriadb_network:
+    driver: bridge
+
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - c:\volumes\mariadb:/data/var/lib/mysql/data/
+      - c:\volumes\mariadb:/data\logs:/var/lib/mysql/logs/
+    networks:
+      - moriadb_network
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin
+    restart: unless-stopped
+    ports:
+      - 8080:80
+    environment:
+      - PMA_HOST=${PMA_HOST}
+      - PMA_PORT=${PMA_PORT}
+    networks:
+      - moriadb_network
+    depends_on:
+      - mariadb
